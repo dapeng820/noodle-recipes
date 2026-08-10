@@ -9,6 +9,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  administration: write
 
 concurrency:
   group: pages
@@ -27,9 +28,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          echo "Attempting to enable GitHub Pages..."
           gh api --method POST repos/${{ github.repository }}/pages \
-            --field source='{"branch":"main","path":"/"}' \
-            --silent || echo "Pages may already be enabled"
+            --field source='{"branch":"main","path":"/"}' 2>&1 || echo "API call failed"
+          echo "Checking Pages status..."
+          gh api repos/${{ github.repository }}/pages 2>&1 || echo "Pages not yet enabled"
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
