@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>面条做法大全</title>
+<style>
+/* ========== 全局重置 & 基础 ========== */
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f0eb; color: #333; }
+.app { max-width: 480px; margin: 0 auto; min-height: 100vh; background: #fff; position: relative; overflow: hidden; padding-bottom: 60px; }
+
+/* ========== 颜色变量 ========== */
+:root {
+  --primary: #E8733A;
+  --primary-light: #FFB347;
+  --blue: #4A90D9;
+  --green: #2ECC71;
+  --bg: #fdf8f4;
+  --card-bg: #fff;
+  --text: #333;
+  --text-light: #888;
+  --border: #f0e8e0;
+  --shadow: 0 2px 12px rgba(232,115,58,0.1);
+  --radius: 12px;
+}
+
+/* ========== 页面容器 ========== */
+.page { display: none; padding: 16px; padding-top: 8px; animation: fadeIn 0.3s ease; }
+.page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ========== 底部Tab导航 ========== */
+.tab-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); max-width: 480px; width: 100%; height: 56px; background: #fff; border-top: 1px solid var(--border); display: flex; z-index: 1000; }
+.tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; color: #999; cursor: pointer; transition: color 0.2s; }
+.tab-item .tab-icon { font-size: 22px; line-height: 1.2; }
+.tab-item.active { color: var(--primary); }
+.tab-item:active { opacity: 0.7; }
+
+/* ========== 通用组件 ========== */
+.section-title { font-size: 18px; font-weight: 700; margin: 16px 0 12px; display: flex; align-items: center; justify-content: space-between; }
+.section-title .more { font-size: 13px; color: var(--primary); font-weight: 400; cursor: pointer; }
+.card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px; margin-bottom: 12px; }
+.tag { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 12px; margin-right: 6px; }
+.tag-easy { background: #e8f5e9; color: #2e7d32; }
+.tag-medium { background: #fff3e0; color: #e65100; }
+.tag-hard { background: #fce4ec; color: #c62828; }
+.tag-popular { background: #fff0f0; color: #e74c3c; }
+.tag-cat { background: #fef3e8; color: var(--primary); }
+
+/* ========== 图片样式 ========== */
+.recipe-img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block; }
+.recipe-img-round { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block; }
+.recipe-img-bg { background: var(--bg); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.step-thumb { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+.know-thumb { width: 100%; height: 100px; object-fit: cover; display: block; }
+.cover-thumb { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+.detail-cover { width: 120px; height: 120px; border-radius: 16px; object-fit: cover; margin: 0 auto 12px; display: block; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+.hot-thumb { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ========== 视频容器 ========== */
+.video-container { width: 100%; border-radius: var(--radius); overflow: hidden; margin-bottom: 16px; position: relative; background: #1a1a2e; }
+.video-container iframe { width: 100%; height: 200px; border: none; display: block; }
+.video-container .video-fallback { width: 100%; height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; cursor: pointer; background: #1a1a2e; }
+.video-container .video-fallback .vp-icon { font-size: 48px; margin-bottom: 8px; }
+.video-container .video-fallback .vp-text { font-size: 13px; opacity: 0.7; }
+.btn-primary { background: var(--primary); color: #fff; border: none; border-radius: 20px; padding: 8px 20px; font-size: 14px; cursor: pointer; }
+.btn-primary:active { opacity: 0.8; }
+.empty-state { text-align: center; padding: 40px 20px; color: var(--text-light); }
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+
+/* ========== 首页 ========== */
+/* 轮播图 */
+.carousel { position: relative; border-radius: var(--radius); overflow: hidden; height: 180px; margin-bottom: 16px; }
+.carousel-slide { position: absolute; inset: 0; display: flex; transition: transform 0.5s ease; }
+.carousel-item { min-width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; color: #fff; padding: 24px; text-align: center; }
+.carousel-item:nth-child(1) { background: linear-gradient(135deg, #E8733A, #FFB347); }
+.carousel-item:nth-child(2) { background: linear-gradient(135deg, #4A90D9, #6BB5FF); }
+.carousel-item:nth-child(3) { background: linear-gradient(135deg, #2ECC71, #82E0AA); }
+.carousel-item .carousel-emoji { font-size: 48px; margin-bottom: 8px; }
+.carousel-item .carousel-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.carousel-item .carousel-desc { font-size: 13px; opacity: 0.9; }
+.carousel-dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; }
+.carousel-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; }
+.carousel-dot.active { background: #fff; width: 24px; border-radius: 4px; }
+
+/* 热门教程横向滚动 */
+.hot-scroll { display: flex; gap: 12px; overflow-x: auto; padding: 4px 0 12px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+.hot-scroll::-webkit-scrollbar { display: none; }
+.hot-card { min-width: 140px; scroll-snap-align: start; background: var(--card-bg); border-radius: var(--radius); box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: hidden; flex-shrink: 0; }
+.hot-card .hot-cover { height: 90px; overflow: hidden; background: var(--bg); }
+.hot-card .hot-info { padding: 8px 10px; }
+.hot-card .hot-info .hot-name { font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hot-card .hot-info .hot-meta { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+
+/* 分类入口网格 */
+.cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+.cat-item { display: flex; flex-direction: column; align-items: center; padding: 14px 8px; background: var(--bg); border-radius: var(--radius); cursor: pointer; transition: transform 0.2s; }
+.cat-item:active { transform: scale(0.95); }
+.cat-item .cat-icon { font-size: 32px; margin-bottom: 6px; }
+.cat-item .cat-label { font-size: 12px; color: var(--text); }
+
+/* 小贴士预览 */
+.tip-preview { background: linear-gradient(135deg, #fef3e8, #fff8f0); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; cursor: pointer; }
+.tip-preview .tip-p-title { font-size: 15px; font-weight: 600; color: var(--primary); margin-bottom: 6px; }
+.tip-preview .tip-p-desc { font-size: 13px; color: #666; }
+
+/* ========== 知识库 ========== */
+.know-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.know-card { border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); cursor: pointer; }
+.know-card .know-cover { height: 100px; overflow: hidden; }
+.know-card .know-body { padding: 12px; }
+.know-card .know-body .know-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.know-card .know-body .know-count { font-size: 12px; color: var(--text-light); }
+.know-card:active { opacity: 0.85; }
+
+/* 知识库详情列表 */
+.know-detail-list .know-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.know-detail-list .know-item:last-child { border-bottom: none; }
+.know-item .ki-icon { font-size: 32px; flex-shrink: 0; }
+.know-item .ki-info { flex: 1; }
+.know-item .ki-info .ki-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.know-item .ki-info .ki-desc { font-size: 13px; color: #666; line-height: 1.5; }
+
+/* ========== 教程分类页 ========== */
+.cat-tabs { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 12px; -webkit-overflow-scrolling: touch; }
+.cat-tabs::-webkit-scrollbar { display: none; }
+.cat-tab { padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border); font-size: 13px; white-space: nowrap; cursor: pointer; transition: all 0.2s; flex-shrink: 0; background: #fff; }
+.cat-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.cat-tab:active { opacity: 0.7; }
+
+/* 教程卡片列表 */
+.tutorial-list .t-card { display: flex; gap: 12px; padding: 12px; background: var(--card-bg); border-radius: var(--radius); box-shadow: 0 1px 6px rgba(0,0,0,0.05); margin-bottom: 12px; cursor: pointer; }
+.t-card .tc-cover { width: 80px; height: 80px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 36px; flex-shrink: 0; background: var(--bg); }
+.t-card .tc-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.t-card .tc-info .tc-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.t-card .tc-info .tc-meta { font-size: 12px; color: var(--text-light); margin-bottom: 4px; }
+.t-card .tc-info .tc-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.t-card:active { opacity: 0.85; }
+
+/* ========== 教程详情 ========== */
+.detail-header { text-align: center; padding: 20px 0; }
+.detail-header .dh-emoji { font-size: 64px; margin-bottom: 8px; }
+.detail-header .dh-name { font-size: 24px; font-weight: 700; }
+.detail-header .dh-cat { font-size: 13px; color: var(--primary); margin-top: 4px; }
+
+.detail-meta { display: flex; justify-content: center; gap: 24px; padding: 12px 0; margin-bottom: 16px; }
+.detail-meta .dm-item { text-align: center; }
+.detail-meta .dm-item .dm-num { font-size: 18px; font-weight: 700; color: var(--primary); }
+.detail-meta .dm-item .dm-label { font-size: 12px; color: var(--text-light); }
+
+.detail-actions { display: flex; gap: 12px; justify-content: center; margin-bottom: 16px; }
+.detail-actions .da-btn { padding: 8px 24px; border-radius: 20px; border: 1px solid var(--border); font-size: 14px; cursor: pointer; background: #fff; display: flex; align-items: center; gap: 4px; }
+.detail-actions .da-btn:active { opacity: 0.7; }
+.detail-actions .da-btn.fav-active { background: #fff0f0; border-color: #e74c3c; color: #e74c3c; }
+
+/* 食材清单 */
+.ingredient-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.ingredient-list .ing-item { padding: 6px 14px; background: var(--bg); border-radius: 20px; font-size: 13px; }
+
+/* 分步教学 */
+.step-list { counter-reset: step; }
+.step-item { display: flex; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+.step-item:last-child { border-bottom: none; }
+.step-item .step-num { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.step-item .step-img { width: 60px; height: 60px; border-radius: 8px; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+.step-item .step-desc { flex: 1; font-size: 14px; line-height: 1.6; padding-top: 4px; }
+
+/* 避坑总结 */
+.tips-list .tip-item { display: flex; gap: 8px; padding: 8px 0; font-size: 14px; line-height: 1.5; }
+.tips-list .tip-item .tip-bullet { color: var(--primary); font-weight: 700; flex-shrink: 0; }
+
+/* ========== 搜索页 ========== */
+.search-box { display: flex; gap: 8px; margin-bottom: 16px; }
+.search-box input { flex: 1; padding: 10px 16px; border: 2px solid var(--border); border-radius: 24px; font-size: 14px; outline: none; transition: border-color 0.2s; }
+.search-box input:focus { border-color: var(--primary); }
+.search-box .search-btn { padding: 10px 20px; border-radius: 24px; border: none; background: var(--primary); color: #fff; font-size: 14px; cursor: pointer; }
+
+.hot-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.hot-tags .hot-tag { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); font-size: 13px; cursor: pointer; background: #fff; }
+.hot-tags .hot-tag:active { background: var(--bg); }
+
+/* ========== 个人中心 ========== */
+.profile-header { text-align: center; padding: 24px 0; }
+.profile-header .ph-avatar { font-size: 64px; margin-bottom: 8px; }
+.profile-header .ph-name { font-size: 18px; font-weight: 600; }
+.profile-header .ph-desc { font-size: 13px; color: var(--text-light); margin-top: 4px; }
+
+.profile-menu { display: flex; flex-direction: column; gap: 8px; }
+.profile-menu .pm-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--card-bg); border-radius: var(--radius); box-shadow: 0 1px 4px rgba(0,0,0,0.04); cursor: pointer; }
+.profile-menu .pm-item:active { background: var(--bg); }
+.profile-menu .pm-item .pm-icon { font-size: 24px; }
+.profile-menu .pm-item .pm-label { flex: 1; font-size: 14px; }
+.profile-menu .pm-item .pm-arrow { color: #ccc; font-size: 16px; }
+
+/* ========== 小贴士页 ========== */
+.tip-full-item { padding: 16px; background: var(--card-bg); border-radius: var(--radius); box-shadow: 0 1px 6px rgba(0,0,0,0.05); margin-bottom: 12px; }
+.tip-full-item .tfi-title { font-size: 16px; font-weight: 600; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.tip-full-item .tfi-body { font-size: 14px; line-height: 1.7; color: #555; }
+
+/* ========== 回到顶部 ========== */
+.back-btn { display: inline-flex; align-items: center; gap: 4px; color: var(--primary); font-size: 14px; cursor: pointer; padding: 8px 0; margin-bottom: 4px; }
+.back-btn:active { opacity: 0.7; }
+
+/* ========== 响应式大屏 ========== */
+@media (min-width: 481px) {
+  .app { border-left: 1px solid var(--border); border-right: 1px solid var(--border); box-shadow: 0 0 30px rgba(0,0,0,0.05); }
+  .carousel { height: 220px; }
+  .hot-card { min-width: 180px; }
+  .hot-card .hot-cover { height: 110px; }
+}
+
+/* ========== 滚动条美化 ========== */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+
+/* ========== 图片Lightbox大图查看 ========== */
+.lightbox-overlay {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.92);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.lightbox-overlay.active {
+  display: flex;
+}
+.lightbox-overlay .lightbox-img {
+  max-width: 92%;
+  max-height: 92%;
+  border-radius: 8px;
+  object-fit: contain;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+  cursor: default;
+}
+.lightbox-overlay .lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: #fff;
+  font-size: 36px;
+  cursor: pointer;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.15);
+  border-radius: 50%;
+  z-index: 10000;
+  user-select: none;
+}
+.lightbox-overlay .lightbox-close:hover {
+  background: rgba(255,255,255,0.3);
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+<!-- ==================== 首页 ==================== -->
+<div class="page active" id="page-home">
+  <div class="carousel" id="homeCarousel">
+    <div class="carousel-slide" id="carouselSlide">
+      <div class="carousel-item">
+        <div class="carousel-emoji">🍜</div>
+        <div class="carousel-title">面条做法大全</div>
+        <div class="carousel-desc">从入门到精通，一碗好面的全部秘密</div>
+      </div>
+      <div class="carousel-item">
+        <div class="carousel-emoji">👨‍🍳</div>
+        <div class="carousel-title">大师配方</div>
+        <div class="carousel-desc">20+道经典面条教程，在家做出馆子味道</div>
+      </div>
+      <div class="carousel-item">
+        <div class="carousel-emoji">💡</div>
+        <div class="carousel-title">实用小贴士</div>
+        <div class="carousel-desc">煮面不坨、面条劲道的秘诀全在这里</div>
+      </div>
+    </div>
+    <div class="carousel-dots" id="carouselDots"></div>
+  </div>
+
+  <div class="section-title">🔥 热门教程 <span class="more" onclick="navigate('tutorials')">查看全部 &gt;</span></div>
+  <div class="hot-scroll" id="hotScroll"></div>
+
+  <div class="section-title">📂 分类快速入口</div>
+  <div class="cat-grid" id="catGrid"></div>
+
+  <div class="section-title">💡 小贴士 <span class="more" onclick="navigate('tips')">查看全部 &gt;</span></div>
+  <div id="tipPreview"></div>
+</div>
+
+<!-- ==================== 知识库 ==================== -->
+<div class="page" id="page-knowledge">
+  <div class="section-title" style="margin-top:0;">📚 面条知识库</div>
+  <div class="know-grid" id="knowGrid"></div>
+</div>
+
+<!-- 知识库详情（子页面） -->
+<div class="page" id="page-knowledge-detail" style="display:none;">
+  <div class="back-btn" onclick="navigate('knowledge')">← 返回知识库</div>
+  <div class="section-title" id="kdTitle" style="margin-top:0;"></div>
+  <div class="know-detail-list" id="kdList"></div>
+</div>
+
+<!-- ==================== 教程分类 ==================== -->
+<div class="page" id="page-tutorials">
+  <div class="section-title" style="margin-top:0;">📖 教程分类</div>
+  <div class="cat-tabs" id="catTabs"></div>
+  <div class="tutorial-list" id="tutorialList"></div>
+</div>
+
+<!-- ==================== 教程详情 ==================== -->
+<div class="page" id="page-detail">
+  <div class="back-btn" onclick="navigate('tutorials')">← 返回教程</div>
+  <div id="detailContent"></div>
+</div>
+
+<!-- ==================== 搜索 ==================== -->
+<div class="page" id="page-search">
+  <div class="section-title" style="margin-top:0;">🔍 搜索</div>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="搜索面条名称、分类..." onkeydown="if(event.key==='Enter') doSearch()">
+    <button class="search-btn" onclick="doSearch()">搜索</button>
+  </div>
+  <div class="section-title" style="font-size:14px;margin-bottom:8px;">🏷️ 热门搜索</div>
+  <div class="hot-tags" id="hotTags"></div>
+  <div class="tutorial-list" id="searchResults"></div>
+</div>
+
+<!-- ==================== 个人中心 ==================== -->
+<div class="page" id="page-profile">
+  <div class="profile-header">
+    <div class="ph-avatar">👩‍🍳</div>
+    <div class="ph-name">面条爱好者</div>
+    <div class="ph-desc">已收藏 <span id="favCount">0</span> 道教程</div>
+  </div>
+  <div class="profile-menu">
+    <div class="pm-item" onclick="showFavorites()">
+      <span class="pm-icon">❤️</span>
+      <span class="pm-label">我的收藏</span>
+      <span class="pm-arrow">›</span>
+    </div>
+    <div class="pm-item" onclick="showHistory()">
+      <span class="pm-icon">📖</span>
+      <span class="pm-label">浏览记录</span>
+      <span class="pm-arrow">›</span>
+    </div>
+    <div class="pm-item" onclick="navigate('tips')">
+      <span class="pm-icon">💡</span>
+      <span class="pm-label">面条小贴士</span>
+      <span class="pm-arrow">›</span>
+    </div>
+    <div class="pm-item" onclick="document.getElementById('msgInput').style.display='block'">
+      <span class="pm-icon">✉️</span>
+      <span class="pm-label">留言反馈</span>
+      <span class="pm-arrow">›</span>
+    </div>
+  </div>
+  <div id="msgInput" style="display:none;margin-top:12px;">
+    <textarea id="msgText" style="width:100%;height:80px;border:1px solid var(--border);border-radius:8px;padding:10px;font-size:14px;resize:none;outline:none;" placeholder="写下你的建议或想法..."></textarea>
+    <button class="btn-primary" style="margin-top:8px;width:100%;" onclick="alert('感谢你的反馈！')">提交反馈</button>
+  </div>
+</div>
+
+<!-- 收藏/历史列表弹窗 -->
+<div class="page" id="page-fav-list">
+  <div class="back-btn" id="favBack" onclick="navigate('profile')">← 返回</div>
+  <div class="section-title" id="favListTitle" style="margin-top:0;"></div>
+  <div class="tutorial-list" id="favListContent"></div>
+</div>
+
+<!-- ==================== 小贴士 ==================== -->
+<div class="page" id="page-tips">
+  <div class="back-btn" onclick="navigate('home')">← 返回首页</div>
+  <div class="section-title" style="margin-top:0;">💡 面条小贴士大全</div>
+  <div id="tipFullList"></div>
+</div>
+
+<!-- ==================== 底部Tab导航 ==================== -->
+<div class="tab-bar">
+  <div class="tab-item active" data-tab="home" onclick="navigate('home')"><span class="tab-icon">🏠</span>首页</div>
+  <div class="tab-item" data-tab="knowledge" onclick="navigate('knowledge')"><span class="tab-icon">📚</span>知识库</div>
+  <div class="tab-item" data-tab="tutorials" onclick="navigate('tutorials')"><span class="tab-icon">📖</span>教程</div>
+  <div class="tab-item" data-tab="search" onclick="navigate('search')"><span class="tab-icon">🔍</span>搜索</div>
+  <div class="tab-item" data-tab="profile" onclick="navigate('profile')"><span class="tab-icon">👤</span>我的</div>
+</div>
+</div>
+
+<!-- ==================== 图片Lightbox大图查看 ==================== -->
+<div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox(event)">
+  <span class="lightbox-close" onclick="closeLightbox(event)">×</span>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="大图">
+</div>
+
+<script>
+/* ========================================================================
+   数据
+   ======================================================================== */
+
+// 面条分类
+const CATEGORIES = ['家常基础面', '特色拌面', '招牌汤面', '地方特色面', '创意炒面/凉面', '粗粮健康面'];
+
+// 教程数据（24道）
+const RECIPES = [
+  {
+    id: 1, name: '西红柿鸡蛋面', category: '家常基础面', cover: '🍅', coverImg: 'assets/covers/recipe_01_tomato_egg.jpg', videoId: 'BV1ou411K7hH',
+    difficulty: '简单', duration: 15, servings: 2, popularity: 2680,
+    ingredients: ['西红柿 2个', '鸡蛋 2个', '挂面 200g', '葱花 适量', '盐 适量', '生抽 1勺', '白糖 少许'],
+    steps: [
+      { desc: '西红柿洗净切块，鸡蛋打散加少许盐搅匀', img: '🔪' },
+      { desc: '锅中热油，倒入蛋液炒散成块，盛出备用', img: '🍳' },
+      { desc: '锅中再加少许油，放入西红柿块翻炒至出汁', img: '🍲' },
+      { desc: '加入适量清水煮开，下入挂面煮至八分熟', img: '🥣' },
+      { desc: '倒入炒好的鸡蛋，加盐、生抽、白糖调味，撒葱花出锅', img: '🍜' }
+    ],
+    tips: ['西红柿要炒到软烂出汁，味道才浓郁', '鸡蛋不要炒太老，嫩滑口感更好', '最后加少许白糖可以提鲜中和酸味']
+  },
+  {
+    id: 2, name: '阳春面', category: '家常基础面', cover: '🍜', coverImg: 'assets/covers/recipe_02_yangchun.jpg', videoId: 'BV13M62YxEXV',
+    difficulty: '简单', duration: 10, servings: 1, popularity: 1850,
+    ingredients: ['细挂面 150g', '猪油 1勺', '生抽 1勺', '老抽 半勺', '葱花 适量', '白胡椒粉 少许', '高汤/开水 适量'],
+    steps: [
+      { desc: '碗中放入猪油、生抽、老抽、葱花、白胡椒粉', img: '🥣' },
+      { desc: '烧一壶开水，冲入碗中调成汤底', img: '💧' },
+      { desc: '另起锅煮面，水开后下入挂面煮至熟透', img: '🍲' },
+      { desc: '将煮好的面条捞入调好的汤碗中', img: '🍜' },
+      { desc: '撒上葱花点缀，趁热享用', img: '✨' }
+    ],
+    tips: ['猪油是阳春面的灵魂，不要省略', '汤底一定要用滚烫的开水冲开', '面条捞出后不要过水，直接入碗']
+  },
+  {
+    id: 3, name: '葱油拌面', category: '家常基础面', cover: '🧅', coverImg: 'assets/covers/recipe_03_scallion_oil.jpg', videoId: 'BV1fM8FeaEPE',
+    difficulty: '简单', duration: 12, servings: 2, popularity: 2200,
+    ingredients: ['挂面 200g', '小葱 1把', '生抽 3勺', '老抽 1勺', '白糖 1勺', '食用油 适量'],
+    steps: [
+      { desc: '小葱洗净切段，葱白和葱叶分开', img: '🔪' },
+      { desc: '锅中倒油，小火放入葱白炸至微焦', img: '🍳' },
+      { desc: '加入葱叶继续小火炸至焦黄，捞出葱段留油', img: '🧅' },
+      { desc: '将生抽、老抽、白糖调匀，倒入葱油中搅匀', img: '🥣' },
+      { desc: '煮好的面条捞出，淋上葱油酱汁拌匀即可', img: '🍜' }
+    ],
+    tips: ['炸葱油全程小火，葱叶炸焦但不要炸糊', '葱油可以一次多做些，密封冷藏保存', '拌面时加一勺煮面汤更顺滑']
+  },
+  {
+    id: 4, name: '清汤挂面', category: '家常基础面', cover: '🥣', coverImg: 'assets/covers/recipe_04_clear_soup.jpg', videoId: 'BV1w5zRY8EbL',
+    difficulty: '简单', duration: 8, servings: 1, popularity: 1200,
+    ingredients: ['挂面 100g', '紫菜 少许', '虾皮 1小撮', '葱花 适量', '盐 适量', '香油 几滴', '生抽 半勺'],
+    steps: [
+      { desc: '碗中放入紫菜、虾皮、葱花、盐、生抽、香油', img: '🥣' },
+      { desc: '冲入滚烫的开水调成汤底', img: '💧' },
+      { desc: '锅中煮面，水开后下挂面煮至熟透', img: '🍲' },
+      { desc: '将面条捞入汤碗中，拌匀即可', img: '🍜' }
+    ],
+    tips: ['紫菜和虾皮本身有鲜味，不需要加味精', '汤底一定要用开水冲，冷水冲不出香味', '可以加一个荷包蛋更有营养']
+  },
+  {
+    id: 5, name: '老北京炸酱面', category: '特色拌面', cover: '🥫', coverImg: 'assets/covers/recipe_05_zhajiang.jpg', videoId: 'BV1kT411v7rK',
+    difficulty: '中等', duration: 30, servings: 3, popularity: 3200,
+    ingredients: ['手擀面 300g', '五花肉 200g', '甜面酱 3勺', '黄豆酱 2勺', '黄瓜 1根', '豆芽 适量', '大葱 1段', '姜 适量'],
+    steps: [
+      { desc: '五花肉切成小丁，大葱切葱花，姜切末', img: '🔪' },
+      { desc: '甜面酱和黄豆酱混合，加少许水调匀', img: '🥣' },
+      { desc: '锅中热油，下五花肉丁煸炒出油', img: '🍳' },
+      { desc: '加入葱姜炒香，倒入调好的酱料，小火熬煮10分钟', img: '🥫' },
+      { desc: '黄瓜切丝，豆芽焯水，面条煮熟捞出', img: '🥒' },
+      { desc: '面条上放配菜，浇上炸酱，拌匀食用', img: '🍜' }
+    ],
+    tips: ['五花肉要选肥瘦相间的，太瘦不香', '酱料要小火慢熬，不断搅拌防止糊锅', '配菜可以根据喜好添加，如芹菜、青豆等']
+  },
+  {
+    id: 6, name: '武汉热干面', category: '特色拌面', cover: '🍜', coverImg: 'assets/covers/recipe_06_reganmian.jpg', videoId: 'BV1NN411z7ea',
+    difficulty: '中等', duration: 20, servings: 2, popularity: 3500,
+    ingredients: ['碱水面 300g', '芝麻酱 3勺', '生抽 2勺', '老抽 1勺', '香油 1勺', '辣萝卜干 适量', '葱花 适量', '蒜水 适量'],
+    steps: [
+      { desc: '芝麻酱用香油和温水调开，搅拌至顺滑', img: '🥣' },
+      { desc: '锅中烧水，水开后下入碱水面煮至八分熟', img: '🍲' },
+      { desc: '捞出面条控干水分，淋上少许油拌匀防粘', img: '🥢' },
+      { desc: '将面条再次放入开水中烫10秒捞出', img: '💧' },
+      { desc: '淋上芝麻酱、生抽、老抽、蒜水，撒上辣萝卜干和葱花', img: '🍜' }
+    ],
+    tips: ['碱水面是热干面的灵魂，不能用普通挂面代替', '芝麻酱要调得稀稠适中，太稠拌不开', '面条要经过"掸面"步骤才够劲道']
+  },
+  {
+    id: 7, name: '四川担担面', category: '特色拌面', cover: '🌶️', coverImg: 'assets/covers/recipe_07_dandan.jpg', videoId: 'BV1C24y187nn',
+    difficulty: '中等', duration: 25, servings: 2, popularity: 2900,
+    ingredients: ['鲜面条 250g', '猪肉末 150g', '碎米芽菜 50g', '花生碎 适量', '葱花 适量', '辣椒油 2勺', '花椒粉 少许', '生抽 1勺', '醋 1勺'],
+    steps: [
+      { desc: '锅中热油，下猪肉末煸炒至变色', img: '🍳' },
+      { desc: '加入碎米芽菜炒香，盛出备用', img: '🥫' },
+      { desc: '碗中调底料：辣椒油、花椒粉、生抽、醋、葱花', img: '🥣' },
+      { desc: '面条煮熟捞出，放入调好底料的碗中', img: '🍲' },
+      { desc: '放上炒好的肉末芽菜，撒花生碎和葱花', img: '🍜' }
+    ],
+    tips: ['碎米芽菜是四川特产，淘宝可买到', '花椒粉用现磨的更香', '肉末要炒到干香才好吃']
+  },
+  {
+    id: 8, name: '芝麻酱拌面', category: '特色拌面', cover: '🥜', coverImg: 'assets/covers/recipe_08_sesame.jpg', videoId: 'BV11jSmY3En9',
+    difficulty: '简单', duration: 10, servings: 1, popularity: 1600,
+    ingredients: ['挂面 150g', '芝麻酱 2勺', '生抽 1勺', '醋 1勺', '白糖 半勺', '蒜末 适量', '黄瓜丝 适量'],
+    steps: [
+      { desc: '芝麻酱加温水调开，搅拌至顺滑', img: '🥣' },
+      { desc: '加入生抽、醋、白糖、蒜末调匀', img: '🥄' },
+      { desc: '面条煮熟捞出过凉水，控干水分', img: '🍲' },
+      { desc: '将酱汁淋在面条上，放上黄瓜丝', img: '🍜' },
+      { desc: '拌匀后即可食用', img: '🥢' }
+    ],
+    tips: ['芝麻酱先用香油调开更香', '夏天吃可以过凉水，口感更清爽', '加少许辣椒油味道更丰富']
+  },
+  {
+    id: 9, name: '红烧牛肉面', category: '招牌汤面', cover: '🥩', coverImg: 'assets/covers/recipe_09_beef.jpg', videoId: 'BV1LZ4y1U7Nu',
+    difficulty: '困难', duration: 90, servings: 3, popularity: 4500,
+    ingredients: ['牛腱子 500g', '鲜面条 300g', '八角 2个', '桂皮 1段', '香叶 2片', '干辣椒 3个', '姜 1块', '大葱 1根', '生抽 3勺', '老抽 2勺', '料酒 2勺', '冰糖 1勺'],
+    steps: [
+      { desc: '牛腱子切大块，冷水下锅焯水去血沫', img: '🥩' },
+      { desc: '锅中热油，放入冰糖炒出糖色', img: '🍳' },
+      { desc: '下牛肉块翻炒上色，加入葱姜、八角、桂皮、香叶、干辣椒', img: '🥫' },
+      { desc: '加入生抽、老抽、料酒，倒入足量开水大火烧开', img: '💧' },
+      { desc: '转小火炖1.5小时至牛肉酥烂，加盐调味', img: '🍲' },
+      { desc: '面条煮熟捞出，浇上牛肉和汤，撒葱花', img: '🍜' }
+    ],
+    tips: ['牛肉选牛腱子或牛腩，带筋的更好吃', '炒糖色时注意火候，糖色变深即可，不要炒苦', '炖牛肉一定要用开水，肉质才嫩']
+  },
+  {
+    id: 10, name: '兰州牛肉面', category: '招牌汤面', cover: '🐂', coverImg: 'assets/covers/recipe_10_lanzhou.jpg', videoId: 'BV1oc41177mC',
+    difficulty: '困难', duration: 120, servings: 4, popularity: 5000,
+    ingredients: ['高筋面粉 500g', '牛骨 1根', '牛肉 300g', '白萝卜 1根', '香菜 适量', '蒜苗 适量', '辣椒油 适量', '盐 适量', '胡椒粉 适量'],
+    steps: [
+      { desc: '牛骨和牛肉焯水，放入锅中加足量水熬汤2小时', img: '🥩' },
+      { desc: '面粉加盐和水揉成面团，醒面30分钟', img: '👐' },
+      { desc: '将面团反复揉搓拉伸成细面条', img: '🥢' },
+      { desc: '白萝卜切薄片，放入汤中煮熟', img: '🔪' },
+      { desc: '面条下锅煮至浮起，捞出放入碗中', img: '🍲' },
+      { desc: '浇上滚烫的牛肉汤，放上萝卜片、牛肉片、香菜蒜苗，加辣椒油', img: '🍜' }
+    ],
+    tips: ['牛肉汤要熬够时间，汤色清亮才正宗', '拉面需要反复醒面揉面，家常可用手擀面代替', '"一清二白三红四绿五黄"是正宗兰州牛肉面的标准']
+  },
+  {
+    id: 11, name: '酸辣汤面', category: '招牌汤面', cover: '🌶️', coverImg: 'assets/covers/recipe_11_sour_spicy.jpg', videoId: 'BV1Jv411G7LH',
+    difficulty: '中等', duration: 20, servings: 2, popularity: 2100,
+    ingredients: ['挂面 200g', '西红柿 1个', '鸡蛋 1个', '豆腐 100g', '木耳 适量', '香醋 2勺', '辣椒油 1勺', '白胡椒粉 适量', '盐 适量', '淀粉 适量'],
+    steps: [
+      { desc: '西红柿切块，豆腐切条，木耳泡发切丝', img: '🔪' },
+      { desc: '锅中热油，下西红柿炒出汁', img: '🍳' },
+      { desc: '加入适量水，放入豆腐、木耳煮开', img: '🍲' },
+      { desc: '淋入蛋液搅成蛋花，加盐、醋、辣椒油、白胡椒粉调味', img: '🥣' },
+      { desc: '水淀粉勾芡，面条煮熟捞出浇上酸辣汤', img: '🍜' }
+    ],
+    tips: ['酸辣味的关键是醋和白胡椒粉的比例', '勾芡不要太浓，薄芡口感更好', '可以加火腿丝、瘦肉丝丰富口感']
+  },
+  {
+    id: 12, name: '三鲜面', category: '招牌汤面', cover: '🦐', coverImg: 'assets/covers/recipe_12_sanxian.jpg', videoId: 'BV15dX9YSEQa',
+    difficulty: '中等', duration: 25, servings: 2, popularity: 2400,
+    ingredients: ['鲜面条 250g', '虾仁 100g', '鱿鱼 100g', '香菇 3朵', '青菜 适量', '姜片 适量', '盐 适量', '料酒 1勺', '白胡椒粉 少许'],
+    steps: [
+      { desc: '虾仁去虾线，鱿鱼切花刀，香菇切片', img: '🔪' },
+      { desc: '锅中热油，下姜片爆香，放入虾仁和鱿鱼翻炒', img: '🍳' },
+      { desc: '加入香菇和适量水，煮开后转小火煮10分钟', img: '🍲' },
+      { desc: '加盐、料酒、白胡椒粉调味', img: '🥄' },
+      { desc: '面条和青菜煮熟捞出，浇上三鲜汤料', img: '🍜' }
+    ],
+    tips: ['海鲜不要煮太久，口感才嫩', '汤底可以用鸡汤或骨头汤更鲜美', '鱿鱼切花刀既好看又入味']
+  },
+  {
+    id: 13, name: '红烧排骨面', category: '招牌汤面', cover: '🍖', coverImg: 'assets/covers/recipe_13_ribs.jpg', videoId: 'BV1wp4y1Y7XU',
+    difficulty: '中等', duration: 50, servings: 2, popularity: 3100,
+    ingredients: ['排骨 300g', '鲜面条 250g', '八角 2个', '姜 1块', '生抽 2勺', '老抽 1勺', '冰糖 1勺', '料酒 1勺', '青菜 适量'],
+    steps: [
+      { desc: '排骨焯水去血沫，捞出沥干', img: '🥩' },
+      { desc: '锅中热油，下冰糖炒出糖色，放入排骨翻炒上色', img: '🍳' },
+      { desc: '加入姜片、八角、生抽、老抽、料酒，加开水没过排骨', img: '🥫' },
+      { desc: '小火炖40分钟至排骨酥烂，加盐调味', img: '🍲' },
+      { desc: '面条和青菜煮熟捞出，浇上排骨和汤汁', img: '🍜' }
+    ],
+    tips: ['排骨选肋排或小排，肉质更嫩', '炖排骨时加几滴醋有助于钙质溶解', '汤汁可以多一些，拌面更好吃']
+  },
+  {
+    id: 14, name: '陕西油泼面', category: '地方特色面', cover: '🌶️', coverImg: 'assets/covers/recipe_14_youpo.jpg', videoId: 'BV1jj411p7bh',
+    difficulty: '中等', duration: 30, servings: 2, popularity: 2800,
+    ingredients: ['高筋面粉 300g', '辣椒面 2勺', '蒜末 适量', '葱花 适量', '生抽 2勺', '醋 1勺', '盐 适量', '食用油 适量'],
+    steps: [
+      { desc: '面粉加盐和水揉成面团，醒面30分钟', img: '👐' },
+      { desc: '将面团擀成厚片，切成宽条', img: '🔪' },
+      { desc: '将宽面条拉长，下锅煮熟捞出', img: '🍲' },
+      { desc: '面条上放蒜末、葱花、辣椒面', img: '🥣' },
+      { desc: '锅中烧油至冒烟，泼在辣椒面葱花上', img: '🔥' },
+      { desc: '加入生抽和醋，拌匀即可', img: '🍜' }
+    ],
+    tips: ['油一定要烧到冒烟，泼上去才能激发出香味', '辣椒面用陕西秦椒做的更香', '面条要宽而有嚼劲，口感才正宗']
+  },
+  {
+    id: 15, name: '重庆小面', category: '地方特色面', cover: '🌶️', coverImg: 'assets/covers/recipe_15_chongqing.jpg', videoId: 'BV1dNdVYGE9B',
+    difficulty: '中等', duration: 20, servings: 2, popularity: 3300,
+    ingredients: ['鲜面条 250g', '辣椒油 2勺', '花椒粉 1勺', '蒜末 适量', '姜水 适量', '芝麻酱 1勺', '生抽 1勺', '醋 1勺', '花生碎 适量', '青菜 适量'],
+    steps: [
+      { desc: '碗中调底料：辣椒油、花椒粉、蒜末、姜水、芝麻酱', img: '🥣' },
+      { desc: '加入生抽、醋、少许盐和糖', img: '🥄' },
+      { desc: '锅中烧水，水开后下面条和青菜煮熟', img: '🍲' },
+      { desc: '舀一勺煮面汤冲入调好的底料中', img: '💧' },
+      { desc: '将面条捞入碗中，撒上花生碎和葱花', img: '🍜' }
+    ],
+    tips: ['重庆小面讲究"麻辣鲜香"，花椒粉要足', '底料最好用猪油调，更香', '煮面汤要加到碗里，汤面合一才好吃']
+  },
+  {
+    id: 16, name: '河南烩面', category: '地方特色面', cover: '🥣', coverImg: 'assets/covers/recipe_16_huimian.jpg', videoId: 'BV1or421T7DW',
+    difficulty: '困难', duration: 90, servings: 3, popularity: 2600,
+    ingredients: ['高筋面粉 400g', '羊肉 300g', '羊骨 500g', '粉丝 适量', '木耳 适量', '豆腐皮 适量', '香菜 适量', '盐 适量', '胡椒粉 适量'],
+    steps: [
+      { desc: '羊骨和羊肉焯水，加足量水熬汤1小时', img: '🥩' },
+      { desc: '面粉加盐和水揉成面团，醒面后擀成大片', img: '👐' },
+      { desc: '将面片切成宽条，拉长备用', img: '🔪' },
+      { desc: '粉丝泡软，木耳泡发，豆腐皮切丝', img: '💧' },
+      { desc: '羊肉汤煮开，下拉好的面片煮至浮起', img: '🍲' },
+      { desc: '加入粉丝、木耳、豆腐皮煮开，加盐和胡椒粉调味，撒香菜', img: '🍜' }
+    ],
+    tips: ['羊肉汤要熬到奶白色，汤浓味鲜', '烩面片要醒够时间，拉面时才不会断', '出锅前加少许白胡椒粉去膻增香']
+  },
+  {
+    id: 17, name: '山西刀削面', category: '地方特色面', cover: '🔪', coverImg: 'assets/covers/recipe_17_daoxiao.jpg', videoId: 'BV1YNYdeXEn4',
+    difficulty: '困难', duration: 60, servings: 3, popularity: 2500,
+    ingredients: ['高筋面粉 400g', '猪肉 200g', '土豆 1个', '胡萝卜 1根', '八角 2个', '生抽 2勺', '老抽 1勺', '盐 适量', '葱姜 适量'],
+    steps: [
+      { desc: '面粉加水和成硬面团，醒面30分钟', img: '👐' },
+      { desc: '猪肉切块焯水，土豆胡萝卜切块', img: '🔪' },
+      { desc: '锅中热油，下葱姜八角爆香，放入肉块翻炒', img: '🍳' },
+      { desc: '加入土豆胡萝卜，生抽老抽，加水炖20分钟', img: '🍲' },
+      { desc: '面团揉成椭圆形，用刀削入开水锅中煮至浮起', img: '🔪' },
+      { desc: '捞出刀削面，浇上炖好的臊子', img: '🍜' }
+    ],
+    tips: ['面团要和得硬一些，削的时候才容易成型', '削面刀要锋利，削出的面片厚薄均匀', '没有削面刀可以用普通菜刀代替']
+  },
+  {
+    id: 18, name: '上海粗炒面', category: '创意炒面/凉面', cover: '🍝', coverImg: 'assets/covers/recipe_18_shanghai.jpg', videoId: 'BV16E411f7oc',
+    difficulty: '中等', duration: 20, servings: 2, popularity: 1900,
+    ingredients: ['粗面条 300g', '猪肉丝 100g', '卷心菜 适量', '胡萝卜 半根', '生抽 2勺', '老抽 1勺', '糖 1勺', '食用油 适量'],
+    steps: [
+      { desc: '粗面条煮至八分熟，捞出过凉水控干', img: '🍲' },
+      { desc: '猪肉切丝，卷心菜切丝，胡萝卜切丝', img: '🔪' },
+      { desc: '锅中热油，下肉丝炒至变色', img: '🍳' },
+      { desc: '加入卷心菜和胡萝卜丝翻炒', img: '🥬' },
+      { desc: '放入面条，加入生抽、老抽、糖，大火翻炒均匀', img: '🍝' }
+    ],
+    tips: ['面条煮到八分熟即可，后面还要炒', '炒面时火要大，才能炒出锅气', '面条过凉水后要控干，不然炒出来会黏糊']
+  },
+  {
+    id: 19, name: '三丝炒面', category: '创意炒面/凉面', cover: '🥬', coverImg: 'assets/covers/recipe_19_sansi.jpg', videoId: 'BV1SC4y1Y77J',
+    difficulty: '简单', duration: 15, servings: 2, popularity: 1700,
+    ingredients: ['方便面饼 2块', '火腿肠 1根', '鸡蛋 2个', '豆芽 适量', '韭菜 适量', '生抽 1勺', '老抽 半勺', '食用油 适量'],
+    steps: [
+      { desc: '方便面煮散捞出过凉水，控干水分', img: '🍲' },
+      { desc: '火腿肠切丝，鸡蛋打散，韭菜切段', img: '🔪' },
+      { desc: '锅中热油，炒散鸡蛋盛出', img: '🍳' },
+      { desc: '锅中加油，放火腿丝和豆芽翻炒', img: '🥬' },
+      { desc: '加入面条、鸡蛋、韭菜，加生抽老抽快速翻炒均匀', img: '🍝' }
+    ],
+    tips: ['方便面不要煮太软，散开即可捞出', '炒面全程大火快炒', '韭菜最后放，稍微变软即可出锅']
+  },
+  {
+    id: 20, name: '鸡丝凉面', category: '创意炒面/凉面', cover: '🐔', coverImg: 'assets/covers/recipe_20_chicken.jpg', videoId: 'BV1rqZtYeEKq',
+    difficulty: '中等', duration: 30, servings: 2, popularity: 2300,
+    ingredients: ['鲜面条 250g', '鸡胸肉 1块', '黄瓜 1根', '豆芽 适量', '芝麻酱 2勺', '辣椒油 1勺', '生抽 1勺', '醋 1勺', '蒜末 适量'],
+    steps: [
+      { desc: '鸡胸肉煮熟，放凉后撕成细丝', img: '🐔' },
+      { desc: '黄瓜切丝，豆芽焯水过凉', img: '🔪' },
+      { desc: '芝麻酱加温水调开，加入生抽、醋、蒜末、辣椒油调成酱汁', img: '🥣' },
+      { desc: '面条煮熟后过凉水，控干水分', img: '🍲' },
+      { desc: '面条放盘中，摆上鸡丝、黄瓜丝、豆芽，淋上酱汁', img: '🍜' }
+    ],
+    tips: ['鸡胸肉煮的时候加姜片和料酒去腥', '凉面过凉水后最好拌点香油防粘', '夏天吃凉面冰镇一下更爽口']
+  },
+  {
+    id: 21, name: '韩式冷面', category: '创意炒面/凉面', cover: '❄️', coverImg: 'assets/covers/recipe_21_korean.jpg', videoId: 'BV1im4y1v7pe',
+    difficulty: '中等', duration: 30, servings: 2, popularity: 2100,
+    ingredients: ['冷面 300g', '牛肉 100g', '梨 半个', '黄瓜 半根', '鸡蛋 1个', '泡菜 适量', '白醋 2勺', '白糖 1勺', '生抽 1勺', '冰水 适量'],
+    steps: [
+      { desc: '牛肉煮熟切片，汤加生抽和盐调味后冷藏', img: '🥩' },
+      { desc: '冷面冷水泡软，搓散后备用', img: '💧' },
+      { desc: '梨切丝，黄瓜切丝，鸡蛋煮熟切半', img: '🔪' },
+      { desc: '冷面放入开水煮1分钟，捞出过冰水', img: '🍲' },
+      { desc: '碗中放入冷面，倒入冰镇牛肉汤，放上梨丝、黄瓜丝、泡菜、鸡蛋和牛肉', img: '🍜' }
+    ],
+    tips: ['冷面煮之前一定要泡软搓散', '汤底一定要冰镇，加冰口感更好', '白醋和白糖的比例要调好，酸甜适口']
+  },
+  {
+    id: 22, name: '荞麦凉面', category: '粗粮健康面', cover: '🌾', coverImg: 'assets/covers/recipe_22_soba.jpg', videoId: 'BV1ix41167P2',
+    difficulty: '简单', duration: 15, servings: 2, popularity: 1400,
+    ingredients: ['荞麦面 200g', '秋葵 3根', '纳豆 1盒', '海苔丝 适量', '葱花 适量', '芥末 适量', '生抽 2勺', '日式高汤 适量'],
+    steps: [
+      { desc: '荞麦面煮熟，捞出过冰水控干', img: '🍲' },
+      { desc: '秋葵焯水后切片', img: '🥬' },
+      { desc: '纳豆搅拌至拉丝', img: '🥄' },
+      { desc: '生抽和日式高汤调成蘸汁', img: '🥣' },
+      { desc: '荞麦面撒上海苔丝、葱花，配秋葵、纳豆和蘸汁食用', img: '🍜' }
+    ],
+    tips: ['荞麦面不要煮太久，保持嚼劲', '过冰水可以让面条更爽滑', '蘸汁可以加少许芥末提味']
+  },
+  {
+    id: 23, name: '全麦蔬菜面', category: '粗粮健康面', cover: '🥦', coverImg: 'assets/covers/recipe_23_wholewheat.jpg', videoId: 'BV1mk4y1s7rL',
+    difficulty: '中等', duration: 25, servings: 2, popularity: 1100,
+    ingredients: ['全麦面粉 200g', '菠菜 100g', '胡萝卜 半根', '香菇 3朵', '盐 适量', '橄榄油 适量', '蒜 2瓣'],
+    steps: [
+      { desc: '全麦面粉加水和成面团，醒面20分钟', img: '👐' },
+      { desc: '将面团擀成薄片，切成面条', img: '🔪' },
+      { desc: '菠菜洗净，胡萝卜切片，香菇切片，蒜切片', img: '🥬' },
+      { desc: '锅中热橄榄油，下蒜片爆香，加入蔬菜翻炒', img: '🍳' },
+      { desc: '面条煮熟捞出，放入炒好的蔬菜中拌匀，加盐调味', img: '🍜' }
+    ],
+    tips: ['全麦面团要多醒一会儿，面筋才能充分形成', '蔬菜可以任意搭配，建议多放几种颜色', '用橄榄油代替普通油更健康']
+  },
+  {
+    id: 24, name: '玉米面窝窝面', category: '粗粮健康面', cover: '🌽', coverImg: 'assets/covers/recipe_24_corn.jpg', videoId: 'BV129RYY7E54',
+    difficulty: '中等', duration: 30, servings: 3, popularity: 900,
+    ingredients: ['玉米面 150g', '白面粉 150g', '猪肉末 150g', '香菇 3朵', '胡萝卜 半根', '葱花 适量', '盐 适量', '生抽 1勺'],
+    steps: [
+      { desc: '玉米面和白面混合，加温水和成面团，醒面20分钟', img: '👐' },
+      { desc: '将面团搓成小条，切成小段，用拇指搓成窝窝状', img: '👆' },
+      { desc: '猪肉末加生抽腌制，香菇和胡萝卜切丁', img: '🔪' },
+      { desc: '锅中热油，下肉末炒散，加入香菇胡萝卜丁翻炒', img: '🍳' },
+      { desc: '加入适量水煮开，放入玉米面窝窝煮至浮起', img: '🍲' },
+      { desc: '加盐调味，撒葱花出锅', img: '🍜' }
+    ],
+    tips: ['玉米面和白面比例1:1口感最佳', '搓窝窝时拇指要沾水防粘', '窝窝面浮起后再煮1分钟即可']
+  }
+];
+
+// 知识库数据
+const KNOWLEDGE_DATA = {
+  flour: {
+    name: '面粉选材', icon: '🌾',
+    items: [
+      { title: '高筋面粉', icon: '💪', desc: '蛋白质含量12-15%，适合做面包、面条、披萨。面筋强，做出的面条劲道有嚼劲。' },
+      { title: '中筋面粉', icon: '⚖️', desc: '蛋白质含量9-11%，是家庭最常用的面粉。适合做包子、饺子、馒头和普通面条。' },
+      { title: '低筋面粉', icon: '🫧', desc: '蛋白质含量7-9%，面筋弱，适合做蛋糕、饼干等酥脆糕点。不适合做面条。' },
+      { title: '全麦面粉', icon: '🌾', desc: '保留了麸皮和胚芽，营养更全面。但面筋含量低，做面条时建议与高筋粉混合使用。' },
+      { title: '荞麦面粉', icon: '🌰', desc: '荞麦制成，不含面筋，适合做荞麦面条。口感独特，适合搭配蘸汁食用。' }
+    ]
+  },
+  noodle: {
+    name: '成品面条选材', icon: '🍜',
+    items: [
+      { title: '干挂面', icon: '📦', desc: '最方便的家庭面条，保质期长。有细面和宽面之分，适合做汤面和拌面。' },
+      { title: '鲜湿面', icon: '💧', desc: '口感比干挂面更Q弹，保存期短。适合做炒面和拌面。' },
+      { title: '碱水面', icon: '🧪', desc: '加碱制作的面条，颜色偏黄，口感劲道。热干面、云吞面的标配。' },
+      { title: '鸡蛋面', icon: '🥚', desc: '和面时加入鸡蛋，口感更筋道，颜色更黄。适合做炒面和汤面。' },
+      { title: '意大利面', icon: '🍝', desc: '杜兰小麦制成，口感硬实。适合做西式意面，也可创新做中式炒面。' }
+    ]
+  },
+  seasoning: {
+    name: '配菜/调料选材', icon: '🧂',
+    items: [
+      { title: '酱油类', icon: '🫘', desc: '生抽提鲜、老抽上色。凉拌用凉拌酱油，炒面用普通生抽即可。' },
+      { title: '醋类', icon: '🍶', desc: '陈醋适合拌面，香醋适合汤面，白醋适合凉面。酸辣面用香醋最佳。' },
+      { title: '芝麻酱', icon: '🥜', desc: '热干面、凉面的灵魂调料。使用前用香油或温水调开，搅拌至顺滑。' },
+      { title: '辣椒油', icon: '🌶️', desc: '自制辣椒油更香。辣椒面加芝麻，浇上热油即成。可加入八角、桂皮增香。' },
+      { title: '配菜搭配', icon: '🥬', desc: '黄瓜丝、豆芽、青菜、胡萝卜丝、鸡蛋丝、火腿丝、木耳丝，根据面条类型搭配。' }
+    ]
+  },
+  tool: {
+    name: '工具选材', icon: '🔧',
+    items: [
+      { title: '煮面锅', icon: '🫕', desc: '选择深口大锅，水量要足。煮面时水宽面才不粘连。' },
+      { title: '擀面杖', icon: '🥖', desc: '做手擀面必备。木质擀面杖最好，长度至少40cm。' },
+      { title: '削面刀', icon: '🔪', desc: '做刀削面专用。弧形削面刀最好用，也可以用普通菜刀代替。' },
+      { title: '面条机', icon: '⚙️', desc: '家用电动面条机可以压出各种厚度和宽度的面条，省时省力。' },
+      { title: '漏勺/笊篱', icon: '🥄', desc: '捞面专用。不锈钢或竹制笊篱最好用，沥水方便。' }
+    ]
+  }
+};
+
+// 小贴士数据
+const TIPS_DATA = [
+  { title: '🍜 煮面不坨的秘诀', content: '水要宽（水量充足），水开后下面条，用筷子轻轻搅散。煮面时加少许盐和几滴油，面条更爽滑不粘连。煮好后迅速捞出，不要久泡。' },
+  { title: '💪 面条劲道的秘诀', content: '和面时加一个鸡蛋和少许盐，面筋更结实。面团要揉透醒够（至少醒20分钟）。煮面时不要煮太久，八分熟口感最佳。捞出后过凉水更劲道。' },
+  { title: '🧂 万能拌面酱汁公式', content: '生抽2勺 + 香醋1勺 + 蒜末1勺 + 葱花1勺 + 辣椒油1勺 + 白糖半勺 + 香油几滴。这个比例可以按个人口味调整，适合绝大多数拌面。' },
+  { title: '🥣 汤面汤底的秘密', content: '最简单的汤底：猪油+生抽+葱花+白胡椒粉+开水。升级版可以加鸡汤、骨头汤。汤面讲究"汤清味浓"，汤底是灵魂。' },
+  { title: '🔥 炒面不粘锅的技巧', content: '面条煮到八分熟捞出，过凉水后控干水分，加少许油拌匀防粘。炒面时锅要烧热，油要足，大火快炒。' },
+  { title: '🥟 手擀面成功的5个要点', content: '1. 面粉选高筋粉 2. 水要少量多次加 3. 面团要硬 4. 醒面时间要够 5. 擀面时撒干粉防粘。' },
+  { title: '🌶️ 自制辣椒油的做法', content: '辣椒面50g + 白芝麻20g + 盐5g 放入碗中。锅中烧油200ml至冒烟，稍凉后分三次倒入辣椒面中，边倒边搅拌。可加入八角、桂皮、香叶增香。' },
+  { title: '❄️ 凉面好吃的关键', content: '面条煮熟后马上过冰水，口感更爽滑。控干水分后拌入少许香油或熟油防粘。酱汁要稍微咸一点，因为面条本身没有味道。' },
+  { title: '🥩 红烧牛肉面汤浓的秘诀', content: '牛肉要炒糖色，颜色才红亮。炖肉时加几滴醋，肉质更嫩。炖好后不要马上吃，放置一晚更入味。' },
+  { title: '🧊 面条保存方法', content: '鲜面条可以冷冻保存1个月。冷冻前撒上干淀粉拌匀，装入密封袋。煮的时候直接下开水，不需要解冻。' }
+];
+
+/* ========================================================================
+   localStorage 工具
+   ======================================================================== */
+function getFavorites() {
+  try { return JSON.parse(localStorage.getItem('noodle_favs') || '[]'); }
+  catch(e) { return []; }
+}
+function setFavorites(favs) {
+  localStorage.setItem('noodle_favs', JSON.stringify(favs));
+}
+function isFavorite(id) {
+  return getFavorites().includes(id);
+}
+function toggleFavorite(id) {
+  let favs = getFavorites();
+  if (favs.includes(id)) {
+    favs = favs.filter(f => f !== id);
+  } else {
+    favs.push(id);
+  }
+  setFavorites(favs);
+  return favs.includes(id);
+}
+
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem('noodle_history') || '[]'); }
+  catch(e) { return []; }
+}
+function addHistory(id) {
+  let h = getHistory();
+  h = h.filter(x => x !== id);
+  h.unshift(id);
+  if (h.length > 50) h = h.slice(0, 50);
+  localStorage.setItem('noodle_history', JSON.stringify(h));
+}
+
+/* ========================================================================
+   路由
+   ======================================================================== */
+function navigate(page, params) {
+  let hash = '#' + page;
+  if (params) hash += '?' + new URLSearchParams(params).toString();
+  window.location.hash = hash;
+}
+
+function handleRoute() {
+  const hash = window.location.hash.slice(1) || 'home';
+  const [page, queryStr] = hash.split('?');
+  const params = Object.fromEntries(new URLSearchParams(queryStr));
+
+  // 隐藏所有页面
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+
+  // 更新tab高亮
+  document.querySelectorAll('.tab-item').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === page);
+  });
+
+  // 根据页面显示
+  switch(page) {
+    case 'home': renderHome(); break;
+    case 'knowledge': renderKnowledge(); break;
+    case 'knowledge-detail': renderKnowledgeDetail(params.type); break;
+    case 'tutorials': renderTutorials(); break;
+    case 'detail': renderDetail(params.id); break;
+    case 'search': renderSearch(); break;
+    case 'profile': renderProfile(); break;
+    case 'fav-list': renderFavList(params.mode); break;
+    case 'tips': renderTips(); break;
+    default: navigate('home'); return;
+  }
+
+  // 显示当前页面
+  const el = document.getElementById('page-' + page);
+  if (el) el.classList.add('active');
+  else {
+    const el2 = document.getElementById('page-home');
+    if (el2) el2.classList.add('active');
+  }
+
+  // 滚动到顶部
+  window.scrollTo(0, 0);
+}
+
+window.addEventListener('hashchange', handleRoute);
+
+/* ========================================================================
+   首页
+   ======================================================================== */
+let carouselTimer = null;
+let carouselIndex = 0;
+
+function renderHome() {
+  // 轮播图
+  const dots = document.getElementById('carouselDots');
+  dots.innerHTML = '<span class="carousel-dot active"></span><span class="carousel-dot"></span><span class="carousel-dot"></span>';
+  carouselIndex = 0;
+  startCarousel();
+
+  // 热门教程
+  const hotScroll = document.getElementById('hotScroll');
+  const sorted = [...RECIPES].sort((a,b) => b.popularity - a.popularity).slice(0, 8);
+  hotScroll.innerHTML = sorted.map(r => `
+    <div class="hot-card" onclick="navigate('detail', {id:${r.id}})">
+      <div class="hot-cover recipe-img-bg"><img class="hot-thumb" src="${r.coverImg}" alt="${r.name}" loading="lazy"></div>
+      <div class="hot-info">
+        <div class="hot-name">${r.name}</div>
+        <div class="hot-meta">❤️ ${r.popularity} | ${r.duration}分钟</div>
+      </div>
+    </div>
+  `).join('');
+
+  // 分类入口
+  const catGrid = document.getElementById('catGrid');
+  const CAT_ICONS = ['🍜', '🥢', '🥣', '🌍', '🍝', '🌾'];
+  catGrid.innerHTML = CATEGORIES.map((c, i) => `
+    <div class="cat-item" onclick="navigate('tutorials');setTimeout(()=>filterByCategory('${c}'),100)">
+      <span class="cat-icon">${CAT_ICONS[i]}</span>
+      <span class="cat-label">${c}</span>
+    </div>
+  `).join('');
+
+  // 小贴士预览
+  const tipPreview = document.getElementById('tipPreview');
+  const tips = TIPS_DATA.slice(0, 3);
+  tipPreview.innerHTML = tips.map(t => `
+    <div class="tip-preview" onclick="navigate('tips')">
+      <div class="tip-p-title">${t.title}</div>
+      <div class="tip-p-desc">${t.content.slice(0, 40)}...</div>
+    </div>
+  `).join('');
+}
+
+function startCarousel() {
+  if (carouselTimer) clearInterval(carouselTimer);
+  carouselTimer = setInterval(() => {
+    carouselIndex = (carouselIndex + 1) % 3;
+    updateCarousel();
+  }, 4000);
+}
+
+function updateCarousel() {
+  const slide = document.getElementById('carouselSlide');
+  slide.style.transform = `translateX(-${carouselIndex * 100}%)`;
+  document.querySelectorAll('.carousel-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === carouselIndex);
+  });
+}
+
+// 点击轮播图控制
+document.addEventListener('click', function(e) {
+  const dot = e.target.closest('.carousel-dot');
+  if (dot) {
+    const idx = Array.from(document.querySelectorAll('.carousel-dot')).indexOf(dot);
+    carouselIndex = idx;
+    updateCarousel();
+    if (carouselTimer) { clearInterval(carouselTimer); carouselTimer = null; }
+    startCarousel();
+  }
+});
+
+/* ========================================================================
+   知识库
+   ======================================================================== */
+function renderKnowledge() {
+  const grid = document.getElementById('knowGrid');
+  const colors = ['#fef3e8', '#e8f4fd', '#fef9e8', '#f0f4f0'];
+  const knowCovers = { flour: 'assets/knowledge/flour.jpg', noodle: 'assets/knowledge/noodle.jpg', seasoning: 'assets/knowledge/seasoning.jpg', tool: 'assets/knowledge/tool.jpg' };
+  const entries = Object.entries(KNOWLEDGE_DATA);
+  grid.innerHTML = entries.map(([key, val], i) => `
+    <div class="know-card" onclick="navigate('knowledge-detail', {type:'${key}'})">
+      <div class="know-cover recipe-img-bg" style="background:${colors[i]}"><img class="know-thumb" src="${knowCovers[key] || ''}" alt="${val.name}" loading="lazy"></div>
+      <div class="know-body">
+        <div class="know-name">${val.name}</div>
+        <div class="know-count">${val.items.length} 个知识点</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderKnowledgeDetail(type) {
+  const data = KNOWLEDGE_DATA[type];
+  if (!data) { navigate('knowledge'); return; }
+  document.getElementById('kdTitle').textContent = data.icon + ' ' + data.name;
+  const list = document.getElementById('kdList');
+  list.innerHTML = data.items.map(item => `
+    <div class="know-item">
+      <div class="ki-icon">${item.icon}</div>
+      <div class="ki-info">
+        <div class="ki-title">${item.title}</div>
+        <div class="ki-desc">${item.desc}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ========================================================================
+   教程分类
+   ======================================================================== */
+let currentCatFilter = '全部';
+
+function renderTutorials() {
+  const tabs = document.getElementById('catTabs');
+  tabs.innerHTML = ['全部', ...CATEGORIES].map(c => `
+    <div class="cat-tab ${c === currentCatFilter ? 'active' : ''}" onclick="filterByCategory('${c}')">${c}</div>
+  `).join('');
+
+  renderTutorialList();
+}
+
+function filterByCategory(cat) {
+  currentCatFilter = cat;
+  renderTutorials();
+}
+
+function renderTutorialList() {
+  const list = document.getElementById('tutorialList');
+  let filtered = currentCatFilter === '全部' ? [...RECIPES] : RECIPES.filter(r => r.category === currentCatFilter);
+  list.innerHTML = filtered.map(r => `
+    <div class="t-card" onclick="navigate('detail', {id:${r.id}})">
+      <div class="tc-cover recipe-img-bg"><img class="cover-thumb" src="${r.coverImg}" alt="${r.name}" loading="lazy"></div>
+      <div class="tc-info">
+        <div class="tc-name">${r.name}</div>
+        <div class="tc-meta">
+          ❤️ ${r.popularity} &nbsp;|&nbsp; ⏱ ${r.duration}分钟 &nbsp;|&nbsp; 👥 ${r.servings}人
+        </div>
+        <div class="tc-tags">
+          <span class="tag ${r.difficulty === '简单' ? 'tag-easy' : r.difficulty === '中等' ? 'tag-medium' : 'tag-hard'}">${r.difficulty}</span>
+          <span class="tag tag-cat">${r.category}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><div>该分类暂无教程</div></div>';
+  }
+}
+
+/* ========================================================================
+   教程详情
+   ======================================================================== */
+
+// 根据步骤描述关键词映射步骤图片
+function getStepImage(desc) {
+  if (/切|洗|准备/.test(desc)) return 'assets/steps/cutting.jpg';
+  if (/揉|和|醒/.test(desc)) return 'assets/steps/kneading.jpg';
+  if (/擀|拉|削/.test(desc)) return 'assets/steps/rolling.jpg';
+  if (/煮|焯|烫/.test(desc)) return 'assets/steps/boiling.jpg';
+  if (/炒|翻|煎/.test(desc)) return 'assets/steps/stir_fry.jpg';
+  if (/调|酱|汁/.test(desc)) return 'assets/steps/sauce.jpg';
+  if (/捞|盛|浇|撒|放/.test(desc)) return 'assets/steps/serving.jpg';
+  return 'assets/steps/prep.jpg';
+}
+
+/* ========================================================================
+   图片Lightbox大图查看
+   ======================================================================== */
+function openLightbox(src) {
+  const overlay = document.getElementById('lightboxOverlay');
+  const img = document.getElementById('lightboxImg');
+  img.src = src;
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox(e) {
+  if (e) e.stopPropagation();
+  const overlay = document.getElementById('lightboxOverlay');
+  overlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function renderDetail(id) {
+  const recipe = RECIPES.find(r => r.id === Number(id));
+  if (!recipe) { navigate('tutorials'); return; }
+
+  addHistory(Number(id));
+
+  const fav = isFavorite(recipe.id);
+  const container = document.getElementById('detailContent');
+  container.innerHTML = `
+    <div class="detail-header">
+      <div class="dh-emoji"><img class="detail-cover" src="${recipe.coverImg}" alt="${recipe.name}" onclick="openLightbox('${recipe.coverImg}')" style="cursor:pointer;"></div>
+      <div class="dh-name">${recipe.name}</div>
+      <div class="dh-cat">${recipe.category}</div>
+    </div>
+
+    <div class="detail-meta">
+      <div class="dm-item">
+        <div class="dm-num">${recipe.difficulty}</div>
+        <div class="dm-label">难度</div>
+      </div>
+      <div class="dm-item">
+        <div class="dm-num">${recipe.duration}</div>
+        <div class="dm-label">分钟</div>
+      </div>
+      <div class="dm-item">
+        <div class="dm-num">${recipe.servings}</div>
+        <div class="dm-label">人份</div>
+      </div>
+      <div class="dm-item">
+        <div class="dm-num">❤️ ${recipe.popularity}</div>
+        <div class="dm-label">热度</div>
+      </div>
+    </div>
+
+    <div class="detail-actions">
+      <button class="da-btn ${fav ? 'fav-active' : ''}" onclick="toggleFavBtn(${recipe.id})">
+        ${fav ? '❤️ 已收藏' : '🤍 收藏'}
+      </button>
+      <button class="da-btn" onclick="shareRecipe('${recipe.name}')">📤 分享</button>
+    </div>
+
+    <div class="card">
+      <div class="section-title" style="margin-top:0;">📋 食材清单</div>
+      <div class="ingredient-list">
+        ${recipe.ingredients.map(i => `<span class="ing-item">${i}</span>`).join('')}
+      </div>
+    </div>
+
+    <div class="video-container">
+      ${recipe.videoId ? `
+        <iframe src="https://player.bilibili.com/player.html?bvid=${recipe.videoId}&page=1&autoplay=0" allowfullscreen="true" loading="lazy" scrolling="no" border="0" frameborder="no" framespacing="0"></iframe>
+      ` : `
+        <div class="video-fallback" onclick="alert('视频教程准备中')">
+          <div class="vp-icon">▶️</div>
+          <div class="vp-text">视频教程准备中</div>
+        </div>
+      `}
+    </div>
+
+    <div class="card">
+      <div class="section-title" style="margin-top:0;">👩‍🍳 分步教学</div>
+      <div class="step-list">
+        ${recipe.steps.map((s, i) => `
+          <div class="step-item">
+            <div class="step-num">${i + 1}</div>
+            <div class="step-img"><img class="step-thumb" src="${getStepImage(s.desc)}" alt="步骤图片" loading="lazy" onclick="openLightbox('${getStepImage(s.desc)}')" style="cursor:pointer;"></div>
+            <div class="step-desc">${s.desc}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title" style="margin-top:0;">⚠️ 避坑总结</div>
+      <div class="tips-list">
+        ${recipe.tips.map(t => `
+          <div class="tip-item"><span class="tip-bullet">💡</span> ${t}</div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function toggleFavBtn(id) {
+  const now = toggleFavorite(id);
+  const btns = document.querySelectorAll('.da-btn');
+  if (btns.length > 0) {
+    btns[0].classList.toggle('fav-active', now);
+    btns[0].innerHTML = now ? '❤️ 已收藏' : '🤍 收藏';
+  }
+  renderProfile();
+}
+
+function shareRecipe(name) {
+  if (navigator.share) {
+    navigator.share({ title: name, text: `快来学做${name}！`, url: window.location.href });
+  } else {
+    prompt('复制链接分享：', window.location.href);
+  }
+}
+
+/* ========================================================================
+   搜索
+   ======================================================================== */
+function renderSearch() {
+  const hotTags = document.getElementById('hotTags');
+  const hotSearches = ['西红柿鸡蛋面', '红烧牛肉面', '热干面', '炸酱面', '油泼面', '重庆小面', '简单', '汤面', '拌面', '炒面'];
+  hotTags.innerHTML = hotSearches.map(t => `<span class="hot-tag" onclick="searchByTag('${t}')">${t}</span>`).join('');
+  document.getElementById('searchResults').innerHTML = '';
+  document.getElementById('searchInput').value = '';
+}
+
+function searchByTag(tag) {
+  document.getElementById('searchInput').value = tag;
+  doSearch();
+}
+
+function doSearch() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const results = document.getElementById('searchResults');
+  if (!q) { results.innerHTML = ''; return; }
+
+  const filtered = RECIPES.filter(r =>
+    r.name.includes(q) ||
+    r.category.includes(q) ||
+    r.difficulty.includes(q) ||
+    r.ingredients.some(i => i.includes(q))
+  );
+
+  if (filtered.length === 0) {
+    results.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><div>未找到相关教程，试试其他关键词</div></div>';
+    return;
+  }
+
+  results.innerHTML = filtered.map(r => `
+    <div class="t-card" onclick="navigate('detail', {id:${r.id}})">
+      <div class="tc-cover recipe-img-bg"><img class="cover-thumb" src="${r.coverImg}" alt="${r.name}" loading="lazy"></div>
+      <div class="tc-info">
+        <div class="tc-name">${r.name}</div>
+        <div class="tc-meta">❤️ ${r.popularity} | ⏱ ${r.duration}分钟 | ${r.difficulty}</div>
+        <div class="tc-tags"><span class="tag tag-cat">${r.category}</span></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ========================================================================
+   个人中心
+   ======================================================================== */
+function renderProfile() {
+  document.getElementById('favCount').textContent = getFavorites().length;
+}
+
+function showFavorites() {
+  navigate('fav-list', {mode: 'fav'});
+}
+
+function showHistory() {
+  navigate('fav-list', {mode: 'history'});
+}
+
+function renderFavList(mode) {
+  const title = document.getElementById('favListTitle');
+  const content = document.getElementById('favListContent');
+  const back = document.getElementById('favBack');
+
+  if (mode === 'fav') {
+    title.textContent = '❤️ 我的收藏';
+    const ids = getFavorites();
+    const items = RECIPES.filter(r => ids.includes(r.id));
+    if (items.length === 0) {
+      content.innerHTML = '<div class="empty-state"><div class="empty-icon">💔</div><div>还没有收藏的教程，快去看看吧</div></div>';
+    } else {
+      content.innerHTML = items.map(r => `
+        <div class="t-card" onclick="navigate('detail', {id:${r.id}})">
+          <div class="tc-cover recipe-img-bg"><img class="cover-thumb" src="${r.coverImg}" alt="${r.name}" loading="lazy"></div>
+          <div class="tc-info">
+            <div class="tc-name">${r.name}</div>
+            <div class="tc-meta">❤️ ${r.popularity} | ${r.difficulty}</div>
+            <div class="tc-tags"><span class="tag tag-cat">${r.category}</span></div>
+          </div>
+        </div>
+      `).join('');
+    }
+  } else {
+    title.textContent = '📖 浏览记录';
+    const ids = getHistory();
+    const items = RECIPES.filter(r => ids.includes(r.id));
+    if (items.length === 0) {
+      content.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><div>还没有浏览记录</div></div>';
+    } else {
+      content.innerHTML = items.map(r => `
+        <div class="t-card" onclick="navigate('detail', {id:${r.id}})">
+          <div class="tc-cover recipe-img-bg"><img class="cover-thumb" src="${r.coverImg}" alt="${r.name}" loading="lazy"></div>
+          <div class="tc-info">
+            <div class="tc-name">${r.name}</div>
+            <div class="tc-meta">❤️ ${r.popularity} | ${r.difficulty}</div>
+            <div class="tc-tags"><span class="tag tag-cat">${r.category}</span></div>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+}
+
+/* ========================================================================
+   小贴士
+   ======================================================================== */
+function renderTips() {
+  const list = document.getElementById('tipFullList');
+  list.innerHTML = TIPS_DATA.map(t => `
+    <div class="tip-full-item">
+      <div class="tfi-title">${t.title}</div>
+      <div class="tfi-body">${t.content}</div>
+    </div>
+  `).join('');
+}
+
+/* ========================================================================
+   初始化
+   ======================================================================== */
+document.addEventListener('DOMContentLoaded', function() {
+  handleRoute();
+});
+</script>
+</body>
+</html>
