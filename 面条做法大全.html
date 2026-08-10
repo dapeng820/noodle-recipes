@@ -1033,16 +1033,9 @@ function renderTutorialList() {
    教程详情
    ======================================================================== */
 
-// 根据步骤描述关键词映射步骤图片
-function getStepImage(desc) {
-  if (/切|洗|准备/.test(desc)) return 'assets/steps/cutting.jpg';
-  if (/揉|和|醒/.test(desc)) return 'assets/steps/kneading.jpg';
-  if (/擀|拉|削/.test(desc)) return 'assets/steps/rolling.jpg';
-  if (/煮|焯|烫/.test(desc)) return 'assets/steps/boiling.jpg';
-  if (/炒|翻|煎/.test(desc)) return 'assets/steps/stir_fry.jpg';
-  if (/调|酱|汁/.test(desc)) return 'assets/steps/sauce.jpg';
-  if (/捞|盛|浇|撒|放/.test(desc)) return 'assets/steps/serving.jpg';
-  return 'assets/steps/prep.jpg';
+// 获取具体食谱步骤图片（带通用后备）
+function getStepImage(recipeId, stepIndex) {
+  return `assets/steps/recipe_${String(recipeId).padStart(2, '0')}_step_${stepIndex}.jpg`;
 }
 
 /* ========================================================================
@@ -1127,7 +1120,7 @@ function renderDetail(id) {
         ${recipe.steps.map((s, i) => `
           <div class="step-item">
             <div class="step-num">${i + 1}</div>
-            <div class="step-img"><img class="step-thumb" src="${getStepImage(s.desc)}" alt="步骤图片" loading="lazy" onclick="openLightbox('${getStepImage(s.desc)}')" style="cursor:pointer;"></div>
+            <div class="step-img"><img class="step-thumb" src="${getStepImage(recipe.id, i + 1)}" alt="步骤图片" loading="lazy" onclick="openLightbox('${getStepImage(recipe.id, i + 1)}')" style="cursor:pointer;" onerror="this.src='assets/steps/prep.jpg'"></div>
             <div class="step-desc">${s.desc}</div>
           </div>
         `).join('')}
